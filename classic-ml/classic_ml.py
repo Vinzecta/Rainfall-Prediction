@@ -110,3 +110,11 @@ print(f'MSE - LinearRegression: {mean_mse} +/- {std_mse}')
 # MSE - SVR: 0.00282000991060531
 # Best model: {'estimator__C': 1, 'estimator__kernel': 'linear'}
 # MSE - LinearRegression: 2.5782636268150114e-30 +/- 2.5832615415962112e-30
+
+# It outperform again wtfffff ???????
+# MSE - RandomForest - 100 trees: 0.04065811909936812 +/- 0.0062688328513773395
+# MSE - RandomForest - 250 trees: 0.04561172430357175 +/- 0.02235332240480774
+# MSE - RandomForest - 500 trees: 0.041799740125409754 +/- 0.017631189839590448
+# MSE - SVR: 0.0025983334525475354
+# Best model: {'estimator__C': 1, 'estimator__kernel': 'linear'}
+# MSE - LinearRegression: 2.837795549961422e-29 +/- 1.242510008958933e-29
