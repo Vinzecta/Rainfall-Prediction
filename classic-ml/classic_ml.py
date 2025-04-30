@@ -99,7 +99,7 @@ for train_idx, val_idx in kfold.split(X_train, y_train):
 
 mean_mse = np.mean(mses_lr)
 std_mse = np.std(mses_lr)
-# Evaluate performance with number of tree
+# Evaluate performance with number of linear regression
 print(mses_lr)
 print(f'MSE - LinearRegression: {mean_mse} +/- {std_mse}')
 
