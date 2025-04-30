@@ -4,7 +4,6 @@ import random
 from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.ensemble import RandomForestRegressor
-from sklearn.pipeline import make_pipeline
 from sklearn.metrics import mean_squared_error
 from sklearn.multioutput import MultiOutputRegressor
 from sklearn.model_selection import train_test_split
@@ -102,6 +101,16 @@ std_mse = np.std(mses_lr)
 # Evaluate performance with number of linear regression
 print(mses_lr)
 print(f'MSE - LinearRegression: {mean_mse} +/- {std_mse}')
+
+
+
+import joblib
+
+# Save the trained model
+joblib.dump(rf, "random_forest_model.pkl")
+joblib.dump(gs, "svr_model.pkl")
+joblib.dump(lr, "linear_regression_model.pkl")
+
 
 # For whatever fucking reason LinearRegression outperform others ?????
 # MSE - RandomForest - 100 trees: 0.07447493090282847 +/- 0.0678771238265784
