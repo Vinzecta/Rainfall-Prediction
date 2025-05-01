@@ -27,7 +27,8 @@ if __name__=="__main__":
     for i in range(value.TESTS):
         gene_start = time.perf_counter()
         # model = RandomForestRegressor(n_estimators=500, random_state=random.randint(1,1000)) # model to test
-        chromosome, fitness, num_gen = gene.genetic_algorithm(scaled_1_hr_df, MLPRegressor())
+        random.seed(i)
+        chromosome, fitness, num_gen = gene.genetic_algorithm(scaled_1_hr_df, RandomForestRegressor())
         if (not (best_fitness and best_chromosome) or best_fitness > fitness):
             best_chromosome = chromosome
             best_fitness = fitness
@@ -40,5 +41,8 @@ if __name__=="__main__":
     print(f"Best chromosome: {best_chromosome}")
 
 # Best, set limit to 10:
-# linear regression:        [0, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0]
+# LinearRegression:         [0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0]
+# KNeighborsRegressor:      [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+# DecisionTreeRegressor:    [0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0]
+# RandomForestRegressor:    Training time to long => not feasible
 # svr linear kernel c = 1:  [1, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1, 1, 0]
