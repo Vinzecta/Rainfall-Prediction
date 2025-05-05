@@ -30,8 +30,18 @@ else:
 
 resample_data = data.resample('6h').mean()
 
-resample_data['Tpot (degC)'] = resample_data['Tpot (K)'] - 273.15
+
+#Convert from K to C
+# resample_data['Tpot (degC)'] = resample_data['Tpot (K)'] - 273.15
 # resample_data = resample_data.drop(columns=['Tpot (K)']) Delete the Kelvin temperature column if neccessary
+
+#Conver from C to K
+# resample_data['T (K)'] = resample_data['T (degC)'] + 273.15
+# resample_data['Tdew (K)'] = resample_data['Tdew (degC)'] + 273.15
+# resample_data['Tlog (K)'] = resample_data['Tlog (degC)'] + 273.15
+
+#Delete C temperature column (if neccessary)
+# resample_data = resample_data.drop(['T (degC)', 'Tdew (degC)', 'Tlog (degC)'])
 
 resample_data['Rain Rate (mm/h)'] = np.where((resample_data['raining (s)'] > 0), (resample_data['rain (mm)'] * 3600) / resample_data['raining (s)'], 0)
 resample_data['Is Rain'] = np.where(resample_data['Rain Rate (mm/h)'] >= 0.5, 'Yes', 'No')
