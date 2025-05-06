@@ -176,7 +176,7 @@ print(f'Accuracy - Tree: {mean_acc} +/- {std_acc}')
 # Accuracy - RandomForest - 250 trees: 0.911241489207591 +/- 0.02073181292519888
 # Accuracy - RandomForest - 500 trees: 0.912994350282486 +/- 0.027410536100320623 => slight improvement
 
-# Take all voting
+# Take all voting [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0]
 # Accuracy - RandomForest - 100 trees: 0.9342894393741851 +/- 0.01483754617835127
 # Accuracy - RandomForest - 250 trees: 0.9334564682022309 +/- 0.021143378333895315
 # Accuracy - RandomForest - 500 trees: 0.9325727944372012 +/- 0.018959124329052487
