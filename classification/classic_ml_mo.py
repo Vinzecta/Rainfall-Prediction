@@ -70,12 +70,12 @@ y = rain_type_df[[
 # print(f'Best model: {gs.best_params_}')
 
 ############################## LR ##############################
-# mask = [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1]
-# selected_feature = [index for index, value in enumerate(mask) if value == 1]
-# # Select columns where chromosome is 1
-# new_X = rain_type_df.iloc[:, selected_feature].values
+mask = [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1]
+selected_feature = [index for index, value in enumerate(mask) if value == 1]
+# Select columns where chromosome is 1
+new_X = rain_type_df.iloc[:, selected_feature].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random.randint(1,1000))
+X_train, X_test, y_train, y_test = train_test_split(new_X, y, test_size=0.2, random_state=random.randint(1,1000))
 lr = LinearRegression()
 kfold = KFold(n_splits=10)
 # kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=random.randint(1,1000))
@@ -127,13 +127,13 @@ std_acc = np.std(accs_knn)
 # Evaluate performance with accuracy of KNN
 print(f'Accuracy - KNN: {mean_acc} +/- {std_acc}')
 
-############################## KNN ##############################
-# mask = [0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0]
-# selected_feature = [index for index, value in enumerate(mask) if value == 1]
-# # Select columns where chromosome is 1
-# new_X = rain_type_df.iloc[:, selected_feature].values
+############################## Tree ##############################
+mask = [0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1]
+selected_feature = [index for index, value in enumerate(mask) if value == 1]
+# Select columns where chromosome is 1
+new_X = rain_type_df.iloc[:, selected_feature].values
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random.randint(1,1000))
+X_train, X_test, y_train, y_test = train_test_split(new_X, y, test_size=0.2, random_state=random.randint(1,1000))
 tree = DecisionTreeClassifier()
 kfold = KFold(n_splits=10)
 # kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=random.randint(1,1000))
@@ -165,4 +165,4 @@ print(f'Accuracy - Tree: {mean_acc} +/- {std_acc}')
 # After filter: 
 # Accuracy - LinearRegression: 0.8668767202665508 +/- 0.03186056064922991 => No improvements
 # Accuracy - KNN: Accuracy - KNN: 0.9018542662610459 +/- 0.01892346402972425 => Slight improvements
-# Accuracy - Tree: 0.945393307257714 +/- 0.02096577091229071 => Slight improvements
+# Accuracy - Tree: 0.9420107199768216 +/- 0.024310848629831617 => Slight improvements
