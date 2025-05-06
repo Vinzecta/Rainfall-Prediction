@@ -28,7 +28,7 @@ y = rain_type_df[[
     "Rain_Type_No_Rain", "Rain_Type_Shower", "Rain_Type_Very_Heavy_Rain", "Rain_Type_Weak_Rain"
 ]].values
 
-mask = [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
+mask = [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0]
 selected_feature = [index for index, value in enumerate(mask) if value == 1]
 # Select columns where chromosome is 1
 new_X = rain_type_df.iloc[:, selected_feature].values
@@ -75,10 +75,10 @@ for num_tree in num_trees:
 # print(f'Best model: {gs.best_params_}')
 
 ############################## LR ##############################
-mask = [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1]
-selected_feature = [index for index, value in enumerate(mask) if value == 1]
-# Select columns where chromosome is 1
-new_X = rain_type_df.iloc[:, selected_feature].values
+# mask = [1, 0, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 0, 1, 1]
+# selected_feature = [index for index, value in enumerate(mask) if value == 1]
+# # Select columns where chromosome is 1
+# new_X = rain_type_df.iloc[:, selected_feature].values
 
 X_train, X_test, y_train, y_test = train_test_split(new_X, y, test_size=0.2, random_state=random.randint(1,1000))
 lr = LinearRegression()
@@ -104,10 +104,10 @@ std_acc = np.std(accs_lr)
 print(f'Accuracy - LinearRegression: {mean_acc} +/- {std_acc}')
 
 ############################## KNN ##############################
-mask = [0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0]
-selected_feature = [index for index, value in enumerate(mask) if value == 1]
-# Select columns where chromosome is 1
-new_X = rain_type_df.iloc[:, selected_feature].values
+# mask = [0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0]
+# selected_feature = [index for index, value in enumerate(mask) if value == 1]
+# # Select columns where chromosome is 1
+# new_X = rain_type_df.iloc[:, selected_feature].values
 
 X_train, X_test, y_train, y_test = train_test_split(new_X, y, test_size=0.2, random_state=random.randint(1,1000))
 knn = KNeighborsClassifier()
@@ -133,10 +133,10 @@ std_acc = np.std(accs_knn)
 print(f'Accuracy - KNN: {mean_acc} +/- {std_acc}')
 
 ############################## Tree ##############################
-mask = [0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1]
-selected_feature = [index for index, value in enumerate(mask) if value == 1]
-# Select columns where chromosome is 1
-new_X = rain_type_df.iloc[:, selected_feature].values
+# mask = [0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1]
+# selected_feature = [index for index, value in enumerate(mask) if value == 1]
+# # Select columns where chromosome is 1
+# new_X = rain_type_df.iloc[:, selected_feature].values
 
 X_train, X_test, y_train, y_test = train_test_split(new_X, y, test_size=0.2, random_state=random.randint(1,1000))
 tree = DecisionTreeClassifier()
@@ -169,9 +169,17 @@ print(f'Accuracy - Tree: {mean_acc} +/- {std_acc}')
 # Accuracy - Tree: 0.9274880486744894 +/- 0.011524175397089536
 # After filter: 
 # Accuracy - LinearRegression: 0.8668767202665508 +/- 0.03186056064922991 => No improvements
-# Accuracy - KNN: Accuracy - KNN: 0.9018542662610459 +/- 0.01892346402972425 => Slight improvements
+# Accuracy - KNN: 0.9018542662610459 +/- 0.01892346402972425 => Slight improvements
 # Accuracy - Tree: 0.9420107199768216 +/- 0.024310848629831617 => Slight improvements
 
 # Accuracy - RandomForest - 100 trees: 0.8993553527451834 +/- 0.02020487266001686
 # Accuracy - RandomForest - 250 trees: 0.911241489207591 +/- 0.02073181292519888
 # Accuracy - RandomForest - 500 trees: 0.912994350282486 +/- 0.027410536100320623 => slight improvement
+
+# Take all voting
+# Accuracy - RandomForest - 100 trees: 0.9342894393741851 +/- 0.01483754617835127
+# Accuracy - RandomForest - 250 trees: 0.9334564682022309 +/- 0.021143378333895315
+# Accuracy - RandomForest - 500 trees: 0.9325727944372012 +/- 0.018959124329052487
+# Accuracy - LinearRegression: 0.8609952194697957 +/- 0.03400456523223149
+# Accuracy - KNN: 0.9138418079096045 +/- 0.03132143218096468
+# Accuracy - Tree: 0.9607344632768362 +/- 0.021699299101765074
