@@ -67,25 +67,26 @@ else:
 
 resample_data = data.resample('6h').mean()
 
-resample_data['Rain Rate (mm/h)'] = np.where((resample_data['raining (s)'] > 0), (resample_data['rain (mm)'] * 3600) / resample_data['raining (s)'], 0)
-resample_data['Is Rain'] = np.where(resample_data['Rain Rate (mm/h)'] >= 0.5, 'Yes', 'No')
+resample_data['Rain_Rate (mm/h)'] = np.where((resample_data['raining (s)'] > 0), (resample_data['rain (mm)'] * 3600) / resample_data['raining (s)'], 0)
+resample_data['Is_Rain'] = np.where(resample_data['Rain_Rate (mm/h)'] >= 0.5, 'Yes', 'No')
 
-rain_condition = ['No Rain', 'Weak Rain', 'Moderate Rain', 'Heavy Rain', 'Very Heavy Rain', 'Shower', 'Cloudburst']
-rain_rate = [resample_data['Rain Rate (mm/h)'] < 0.5,
-             (resample_data['Rain Rate (mm/h)'] >= 0.5) & (resample_data['Rain Rate (mm/h)'] < 2),
-             (resample_data['Rain Rate (mm/h)'] >= 2) & (resample_data['Rain Rate (mm/h)'] < 6),
-             (resample_data['Rain Rate (mm/h)'] >= 6) & (resample_data['Rain Rate (mm/h)'] < 10),
-             (resample_data['Rain Rate (mm/h)'] >= 10) & (resample_data['Rain Rate (mm/h)'] < 18),
-             (resample_data['Rain Rate (mm/h)'] >= 18) & (resample_data['Rain Rate (mm/h)'] < 30),
-             resample_data['Rain Rate (mm/h)'] >= 30]
-resample_data['Rain Type'] = np.select(rain_rate, rain_condition, default='Unknown')
+rain_condition = ['No_Rain', 'Weak_Rain', 'Moderate_Rain', 'Heavy_Rain', 'Very_Heavy_Rain', 'Shower', 'Cloudburst']
+rain_rate = [resample_data['Rain_Rate (mm/h)'] < 0.5,
+             (resample_data['Rain_Rate (mm/h)'] >= 0.5) & (resample_data['Rain_Rate (mm/h)'] < 2),
+             (resample_data['Rain_Rate (mm/h)'] >= 2) & (resample_data['Rain_Rate (mm/h)'] < 6),
+             (resample_data['Rain_Rate (mm/h)'] >= 6) & (resample_data['Rain_Rate (mm/h)'] < 10),
+             (resample_data['Rain_Rate (mm/h)'] >= 10) & (resample_data['Rain_Rate (mm/h)'] < 18),
+             (resample_data['Rain_Rate (mm/h)'] >= 18) & (resample_data['Rain_Rate (mm/h)'] < 30),
+             resample_data['Rain_Rate (mm/h)'] >= 30]
+resample_data['Rain_Type'] = np.select(rain_rate, rain_condition, default='Unknown')
+is_rain = resample_data.drop(columns=['Rain_Type'])
 resample_data.head()
-resample_data.to_csv("ten_file.csv")
+is_rain.to_csv("./processed/is_rain.csv")
 
 #Preprocessing data
 scaler = StandardScaler()
 encoder = OneHotEncoder(sparse_output=False)
-regression_data = resample_data.drop(columns=['Is Rain', 'Rain Type'])
+regression_data = resample_data.drop(columns=['Is_Rain', 'Rain_Type'])
 categorical_columns = resample_data.select_dtypes(include=['object']).columns.tolist()
 
 one_hot_encoded = encoder.fit_transform(resample_data[categorical_columns])
@@ -96,3 +97,5 @@ regression_data_df = pd.DataFrame(regression_data_scaler, columns=regression_dat
 
 preprocessed_data = pd.concat([regression_data_df, one_hot_df], axis=1)
 preprocessed_data.head()
+preprocessed_data = preprocessed_data.drop(columns=['Is_Rain_No', 'Is_Rain_Yes'])
+preprocessed_data.to_csv("./processed/rain_type.csv")
