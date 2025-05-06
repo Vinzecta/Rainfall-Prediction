@@ -28,26 +28,31 @@ y = rain_type_df[[
     "Rain_Type_No_Rain", "Rain_Type_Shower", "Rain_Type_Very_Heavy_Rain", "Rain_Type_Weak_Rain"
 ]].values
 
-# num_trees = [100, 250, 500]
-# for num_tree in num_trees:
-#     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random.randint(1,1000))
-#     rf = RandomForestClassifier(n_estimators=num_tree, random_state=random.randint(1,1000))
-#     mo_rf = MultiOutputClassifier(rf)
-#     kfold = KFold(n_splits=10)
-#     # kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=random.randint(1,1000))
-#     # Using 10-fold cross validation to evaluate performance
-#     accs_rf = []
-#     for train_idx, val_idx in kfold.split(X_train, y_train):
-#         X_train_fold, X_val_fold = X_train[train_idx], X_train[val_idx]
-#         y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx]
-#         mo_rf.fit(X_train_fold, y_train_fold)
-#         acc_rf = accuracy_score(y_val_fold, mo_rf.predict(X_val_fold))
-#         accs_rf.append(acc_rf)
+mask = [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
+selected_feature = [index for index, value in enumerate(mask) if value == 1]
+# Select columns where chromosome is 1
+new_X = rain_type_df.iloc[:, selected_feature].values
 
-#     mean_acc = np.mean(accs_rf)
-#     std_acc = np.std(accs_rf)
-#     # Evaluate performance with number of tree
-#     print(f'Accuracy - RandomForest - {num_tree} trees: {mean_acc} +/- {std_acc}')
+num_trees = [100, 250, 500]
+for num_tree in num_trees:
+    X_train, X_test, y_train, y_test = train_test_split(new_X, y, test_size=0.2, random_state=random.randint(1,1000))
+    rf = RandomForestClassifier(n_estimators=num_tree, random_state=random.randint(1,1000))
+    mo_rf = MultiOutputClassifier(rf)
+    kfold = KFold(n_splits=10)
+    # kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=random.randint(1,1000))
+    # Using 10-fold cross validation to evaluate performance
+    accs_rf = []
+    for train_idx, val_idx in kfold.split(X_train, y_train):
+        X_train_fold, X_val_fold = X_train[train_idx], X_train[val_idx]
+        y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx]
+        mo_rf.fit(X_train_fold, y_train_fold)
+        acc_rf = accuracy_score(y_val_fold, mo_rf.predict(X_val_fold))
+        accs_rf.append(acc_rf)
+
+    mean_acc = np.mean(accs_rf)
+    std_acc = np.std(accs_rf)
+    # Evaluate performance with number of tree
+    print(f'Accuracy - RandomForest - {num_tree} trees: {mean_acc} +/- {std_acc}')
 
 
 ############################## SVC ##############################
@@ -166,3 +171,7 @@ print(f'Accuracy - Tree: {mean_acc} +/- {std_acc}')
 # Accuracy - LinearRegression: 0.8668767202665508 +/- 0.03186056064922991 => No improvements
 # Accuracy - KNN: Accuracy - KNN: 0.9018542662610459 +/- 0.01892346402972425 => Slight improvements
 # Accuracy - Tree: 0.9420107199768216 +/- 0.024310848629831617 => Slight improvements
+
+# Accuracy - RandomForest - 100 trees: 0.8993553527451834 +/- 0.02020487266001686
+# Accuracy - RandomForest - 250 trees: 0.911241489207591 +/- 0.02073181292519888
+# Accuracy - RandomForest - 500 trees: 0.912994350282486 +/- 0.027410536100320623 => slight improvement
