@@ -27,6 +27,8 @@ if __name__=="__main__":
 
     rain_type_df = pd.read_csv("../processed/rain_type.csv", parse_dates=["Date Time"], index_col="Date Time")
     rain_type_df = rain_type_df.drop(columns=['Rain_Rate (mm/h)'])
+    rain_type_df = rain_type_df.drop(columns=['rain (mm)'])
+    rain_type_df = rain_type_df.drop(columns=['raining (s)'])
 
     is_rain_df = pd.read_csv("../processed/is_rain.csv", parse_dates=["Date Time"], index_col="Date Time")
     is_rain_df['Is_Rain'] = is_rain_df['Is_Rain'].map({'Yes': 1, 'No': 0})
@@ -40,7 +42,7 @@ if __name__=="__main__":
         gene_start = time.perf_counter()
         # model = RandomForestRegressor(n_estimators=500, random_state=random.randint(1,1000)) # model to test
         random.seed(i)
-        chromosome, fitness, num_gen = gene.genetic_algorithm(rain_type_df, RandomForestClassifier())
+        chromosome, fitness, num_gen = gene.genetic_algorithm(rain_type_df, DecisionTreeClassifier())
         if (not (best_fitness and best_chromosome) or best_fitness < fitness):
             best_chromosome = chromosome
             best_fitness = fitness
@@ -58,3 +60,8 @@ if __name__=="__main__":
 # DecisionTreeClassifier:   [0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1]
 # RandomForestRegressor:    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
 #                           [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0]
+
+## remove rain and raining feature
+# LinearRegression:         [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0]
+# KNeighborsClassifier:     [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1]
+# DecisionTreeClassifier:   [0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1]
