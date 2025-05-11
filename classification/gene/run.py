@@ -8,7 +8,7 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import GridSearchCV
 from sklearn.svm import SVR, SVC
 from sklearn.multioutput import MultiOutputRegressor
-from sklearn.linear_model import LinearRegression
+from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
 from sklearn.neural_network import MLPRegressor
@@ -42,7 +42,7 @@ if __name__=="__main__":
         gene_start = time.perf_counter()
         # model = RandomForestRegressor(n_estimators=500, random_state=random.randint(1,1000)) # model to test
         random.seed(i)
-        chromosome, fitness, num_gen = gene.genetic_algorithm(rain_type_df, DecisionTreeClassifier())
+        chromosome, fitness, num_gen = gene.genetic_algorithm(rain_type_df, LinearRegression())
         if (not (best_fitness and best_chromosome) or best_fitness < fitness):
             best_chromosome = chromosome
             best_fitness = fitness
@@ -58,10 +58,22 @@ if __name__=="__main__":
 # LinearRegression:         [1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1]
 # KNeighborsClassifier:     [0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0]
 # DecisionTreeClassifier:   [0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1]
-# RandomForestRegressor:    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
+# RandomForestClassifier:    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
 #                           [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0]
 
-## remove rain and raining feature
+## remove rain and raining feature, limit >= 10
 # LinearRegression:         [1, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 1, 1, 0, 0]
 # KNeighborsClassifier:     [1, 1, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 1, 1, 1, 1]
 # DecisionTreeClassifier:   [0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1]
+
+
+## remove rain and raining feature, limit >= 1
+# LinearRegression:         [1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
+# KNeighborsClassifier:     [0, 0, 0, 0, 1, 1, 0, 0, 1, 0, 1, 1, 0, 1, 0, 1, 0, 1, 0]
+# DecisionTreeClassifier:   [0, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 0, 1]
+# RandomForestClassifier:   [1, 0, 1, 0, 0, 1, 0, 1, 0, 0, 0, 1, 1, 1, 0, 0, 1, 1, 1]
+
+# And:                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
+# Or:                       [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
+# Major:                    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
+# More than 1:              [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1]

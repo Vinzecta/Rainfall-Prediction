@@ -157,25 +157,3 @@ y_test = y_test.to(device)
 pred = lstm(X_test)
 is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1)).float()
 print(f'Test accuracy: {is_correct.mean()}')
-# seq_length = 8
-# chunk_size = seq_length + 1
-# weather_chunk = [rain_type_df[i:i+chunk_size] for i in range(len(rain_type_df) - chunk_size)]
-
-# class WeatherDataset(Dataset):
-#     def __init__(self, chunks):
-#         self.chunks = chunks
-    
-#     def __len__(self):
-#         return len(self.chunks)
-    
-#     def __getitem__(self, index):
-#         chunks = self.chunks[index]
-#         return chunks[:-1], chunks[-1]
-    
-# weather_dataset = WeatherDataset(torch.tensor(weather_chunk))
-# for i, (seq, target) in enumerate(weather_dataset):
-#     print(' Input (X): ', repr(''.join(rain_type_df[seq][0])))
-#     print(' Target (Y): ', repr(''.join(rain_type_df[target][0])))
-#     print()
-#     if i == 1:
-#         break

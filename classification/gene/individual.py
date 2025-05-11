@@ -5,6 +5,18 @@ from sklearn.metrics import mean_squared_error
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
 
+
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import GridSearchCV
+from sklearn.svm import SVR, SVC
+from sklearn.multioutput import MultiOutputRegressor
+from sklearn.linear_model import LinearRegression, LogisticRegression
+from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
+from sklearn.tree import DecisionTreeRegressor, DecisionTreeClassifier
+from sklearn.neural_network import MLPRegressor
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.metrics import accuracy_score
+from sklearn.multioutput import MultiOutputClassifier
 ## An individual will have a binary encoding chromosome for each features. 1 is selected, 0 is ignored
 class Individual:
     ''' Class representing individual in the population '''
@@ -46,4 +58,4 @@ class Individual:
             if gnome == 1:
                 gnome_lst.append(gnome)
 
-        return len(gnome_lst) >= 10
+        return len(gnome_lst) >= 1
