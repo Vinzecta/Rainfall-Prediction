@@ -3,7 +3,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
 
-data = pd.read_csv("../Code/Dataset/mpi_roof.csv", encoding='latin-1')
+data = pd.read_csv("../processed/mpi_roof.csv", encoding='latin-1')
 data['Date Time'] = pd.to_datetime(data['Date Time'], format='%d.%m.%Y %H:%M:%S')
 data = data.set_index("Date Time")
 
@@ -32,8 +32,8 @@ resample_data = data.resample('6h').mean()
 
 
 #Convert from K to C
-# resample_data['Tpot (degC)'] = resample_data['Tpot (K)'] - 273.15
-# resample_data = resample_data.drop(columns=['Tpot (K)']) Delete the Kelvin temperature column if neccessary
+resample_data['Tpot (degC)'] = resample_data['Tpot (K)'] - 273.15
+resample_data = resample_data.drop(columns=['Tpot (K)']) # Delete the Kelvin temperature column if neccessary
 
 #Conver from C to K
 # resample_data['T (K)'] = resample_data['T (degC)'] + 273.15

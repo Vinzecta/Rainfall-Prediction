@@ -1,0 +1,2 @@
+rain_type.csv filter=lfs diff=lfs merge=lfs -text
+is_rain.csv filter=lfs diff=lfs merge=lfs -text

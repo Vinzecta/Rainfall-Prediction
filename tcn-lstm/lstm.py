@@ -28,7 +28,7 @@ X = X.astype(np.float32)
 y = y.astype(np.float32)
 
 # Train test split
-training_data_len = math.ceil(len(rain_type_df) * .8)
+training_data_len = math.ceil(len(rain_type_df) * .7)
 
 # Splitting the dataset
 train_data = rain_type_df[:training_data_len].iloc[:]

@@ -24,7 +24,7 @@ y = rain_type_df[[
     "Rain_Type_No_Rain", "Rain_Type_Shower", "Rain_Type_Very_Heavy_Rain", "Rain_Type_Weak_Rain"
 ]].values
 
-mask = [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1]
+mask = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 selected_feature = [index for index, value in enumerate(mask) if value == 1]
 # Select columns where chromosome is 1
 print(selected_feature)
@@ -43,11 +43,12 @@ y_train = torch.tensor(y_train)
 y_test = torch.tensor(y_test)
 
 train_ds = TensorDataset(X_train, y_train)
+test_ds = TensorDataset(X_test, y_test)
 batch_size = 10
 
 torch.manual_seed(324)
 train_dl = DataLoader(train_ds, batch_size, shuffle=True)
-
+test_dl = DataLoader(test_ds, batch_size, shuffle=True)
 hidden_units = [128, 64, 32, 16]
 input_size = new_X.shape[1]
 all_layers = []
@@ -86,9 +87,21 @@ for epoch in range(num_epochs):
     accuracy_hist_train /= len(train_dl.dataset)
     print(f'Epoch {epoch} Accuracy ' f'{accuracy_hist_train}')
 
-pred = model(X_test)
-is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1)).float()
-print(f'Test accuracy: {is_correct.mean()}')
+# pred = model(X_test)
+# is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1)).float()
+# print(f'Test accuracy: {is_correct.mean()}')
+
+accuracy_hist_test = 0
+with torch.no_grad():
+    for x_test, y_test in test_dl:
+
+        pred = model(x_test)
+
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1))
+        accuracy_hist_test += is_correct.sum()
+
+    accuracy_hist_test = accuracy_hist_test.float() / len(test_dl.dataset)
+    print(f'Config 1 Accuracy: {accuracy_hist_test}' )
 
 ## All feature: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 # Test accuracy: 0.873720109462738
