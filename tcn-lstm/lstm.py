@@ -29,12 +29,10 @@ y = y.astype(np.float32)
 
 # Train test split
 training_data_len = math.ceil(len(rain_type_df) * .8)
-print(training_data_len)
 
 # Splitting the dataset
 train_data = rain_type_df[:training_data_len].iloc[:]
 test_data = rain_type_df[training_data_len:].iloc[:]
-print(train_data.shape, test_data.shape)
 
 input_hours = 12
 output_hours = 1
@@ -49,7 +47,7 @@ for i in range(len(train_data) - input_hours - output_hours):
     # Extract output (next 6 hours)
     y_train.append(train_data.iloc[i+input_hours+output_hours][19:])
 
-# Convert to NumPy arrays
+# Convert to torch tensor arrays
 X_train, y_train = np.array(X_train), np.array(y_train)
 X_train = torch.tensor(X_train, dtype=torch.float32)
 y_train = torch.tensor(y_train, dtype=torch.float32)
@@ -68,7 +66,7 @@ for i in range(len(test_data) - input_hours - output_hours):
     # Extract output (next 6 hours)
     y_test.append(test_data.iloc[i+input_hours+output_hours][19:])
 
-# Convert to NumPy arrays
+# Convert to torch tensor arrays
 X_test, y_test = np.array(X_test), np.array(y_test)
 X_test = torch.tensor(X_test, dtype=torch.float32)
 y_test = torch.tensor(y_test, dtype=torch.float32)
@@ -88,7 +86,7 @@ class WeatherDataset(Dataset):
         return self.X[index], self.y[index]
 
 class LSTM(nn.Module):
-    def __init__(self, input_size, hidden_size, num_layers, dropout=0.2):
+    def __init__(self, input_size, hidden_size, num_layers, dropout=0):
         super().__init__()
         self.hidden_size = hidden_size
         self.num_layers = num_layers
@@ -102,7 +100,112 @@ class LSTM(nn.Module):
         out, _ = self.lstm(x, (h0, c0))
         out = self.linear(out[:, -1, :])
         return out
+
+class LSTMConfig1(nn.Module):
+    def __init__(self, input_size=X.shape[1], output_size=7, dropout=0.0):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, 128, batch_first=True)
+        self.lstm2 = nn.LSTM(128, 512, batch_first=True)
+        self.lstm3 = nn.LSTM(512, 512, batch_first=True)
+        self.lstm4 = nn.LSTM(512, 256, batch_first=True)
+        self.fc = nn.Linear(256, output_size)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
+        out, _ = self.lstm4(out)
+        out = self.fc(out[:, -1, :]) 
+        return out
     
+
+class LSTMConfig2(nn.Module):
+    def __init__(self, input_size=X.shape[1], output_size=7, dropout=0.0):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, 256, batch_first=True)
+        self.lstm2 = nn.LSTM(256, 2048, batch_first=True)
+        self.lstm3 = nn.LSTM(2048, 2048, batch_first=True)
+        self.lstm4 = nn.LSTM(2048, 1024, batch_first=True)
+        self.lstm5 = nn.LSTM(1024, 256, batch_first=True)
+        self.fc = nn.Linear(256, output_size)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
+        out, _ = self.lstm4(out)
+        out, _ = self.lstm5(out)
+        out = self.fc(out[:, -1, :]) 
+        return out
+    
+class LSTMConfig3(nn.Module):
+    def __init__(self, input_size=X.shape[1], output_size=7, dropout=0.0):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, 256, batch_first=True)
+        self.lstm2 = nn.LSTM(256, 512, batch_first=True)
+        self.lstm3 = nn.LSTM(512, 1024, batch_first=True)
+        self.lstm4 = nn.LSTM(1024, 512, batch_first=True)
+        self.lstm5 = nn.LSTM(512, 256, batch_first=True)
+        self.fc = nn.Linear(256, output_size)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
+        out, _ = self.lstm4(out)
+        out, _ = self.lstm5(out)
+        out = self.fc(out[:, -1, :]) 
+        return out
+    
+class LSTMConfig4(nn.Module):
+    def __init__(self, input_size=X.shape[1], output_size=7, dropout=0.0):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, 256, batch_first=True)
+        self.lstm2 = nn.LSTM(256, 1024, batch_first=True)
+        self.lstm3 = nn.LSTM(1024, 1024, batch_first=True)
+        self.lstm4 = nn.LSTM(1024, 512, batch_first=True)
+        self.fc = nn.Linear(512, output_size)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
+        out, _ = self.lstm4(out)
+        out = self.fc(out[:, -1, :]) 
+        return out
+    
+class LSTMConfig5(nn.Module):
+    def __init__(self, input_size=X.shape[1], output_size=7, dropout=0.0):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, 64, batch_first=True)
+        self.lstm2 = nn.LSTM(64, 256, batch_first=True)
+        self.lstm3 = nn.LSTM(256, 512, batch_first=True)
+        self.lstm4 = nn.LSTM(512, 128, batch_first=True)
+        self.fc = nn.Linear(128, output_size)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
+        out, _ = self.lstm4(out)
+        out = self.fc(out[:, -1, :]) 
+        return out
+    
+class LSTMConfig6(nn.Module):
+    def __init__(self, input_size=X.shape[1], output_size=7, dropout=0.0):
+        super().__init__()
+        self.lstm = nn.LSTM(input_size, 128, batch_first=True)
+        self.lstm2 = nn.LSTM(128, 512, batch_first=True)
+        self.lstm3 = nn.LSTM(512, 256, batch_first=True)
+        self.fc = nn.Linear(256, output_size)
+
+    def forward(self, x):
+        out, _ = self.lstm(x)
+        out, _ = self.lstm2(out)
+        out, _ = self.lstm3(out)
+        out = self.fc(out[:, -1, :]) 
+        return out
+
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 print(device)
 
@@ -110,14 +213,14 @@ input_size = X.shape[1]
 num_layers = 3  # Increased number of layers
 hidden_size = 64  # Increased number of hidden units
 output_size = 7
-dropout = 0.2  # Added dropout for regularization
+dropout = 0  # Added dropout for regularization
 
 train_dataset = WeatherDataset(X_train, y_train)
 test_dataset = WeatherDataset(X_test, y_test)
 
-batch_size = 16
-train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+batch_size = 10
+train_loader = DataLoader(train_dataset, batch_size=batch_size, shuffle=False)
+test_loader = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
 
 for _, batch in enumerate(train_loader):
     x_batch, y_batch = batch[0].to(device), batch[1].to(device)
@@ -125,35 +228,264 @@ for _, batch in enumerate(train_loader):
     break
 
 
-lstm = LSTM(input_size, hidden_size, num_layers, dropout)
-print(lstm)
-lstm.to(device)
+## Config 1 ##
+lstm1 = LSTMConfig1()
+print(lstm1)
+lstm1.to(device)
 
 learning_rate = 0.001
-num_epochs = 50
+num_epochs = 20
 
-loss_fn = nn.BCEWithLogitsLoss()
-optimizer = torch.optim.Adam(lstm.parameters(), lr=learning_rate)
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(lstm1.parameters(), lr=learning_rate)
 for epoch in range(num_epochs):
     accuracy_hist_train = 0
 
     for x_batch, y_batch in train_loader:
         x_batch = x_batch.to(device)
         y_batch = y_batch.to(device)
-        pred = lstm(x_batch)
+        pred = lstm1(x_batch)
         loss = loss_fn(pred, y_batch)
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
+        # print(y_batch)
+        # print(pred)
+        # print(torch.argmax(pred, dim=1))
+        # print(torch.argmax(y_batch, dim=1))
+        # print((torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1)).float())
+        # print((torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1)).sum())
         is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1)).float()
+        # print(f'is_correct: {is_correct}')
         accuracy_hist_train += is_correct.sum()
 
-    accuracy_hist_train /= len(train_loader.dataset)
-    print(f'Epoch {epoch} Accuracy ' f'{accuracy_hist_train}')
+    accuracy_hist_train = accuracy_hist_train.float() / len(train_loader.dataset)
+    print(f'Epoch {epoch} Accuracy {accuracy_hist_train}')
+
+
+# pred = lstm1(X_test)
+# is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1)).float()
+# print(f'Test accuracy of config 1: {is_correct.mean()}')
+lstm1.eval()
+accuracy_hist_test = 0
+
+with torch.no_grad():
+    for x_test, y_test in test_loader:
+        x_test = x_test.to(device)
+        y_test = y_test.to(device)
+        pred = lstm1(x_test)
+
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1))
+        accuracy_hist_test += is_correct.sum()
+
+    accuracy_hist_test = accuracy_hist_test.float() / len(test_loader.dataset)
+    print(f'Config 1 Accuracy: {accuracy_hist_test}' )
+
+
+## Config 2 ##
+lstm2 = LSTMConfig2()
+print(lstm2)
+lstm2.to(device)
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(lstm2.parameters(), lr=learning_rate)
+for epoch in range(num_epochs):
+    accuracy_hist_train = 0
+
+    for x_batch, y_batch in train_loader:
+        x_batch = x_batch.to(device)
+        y_batch = y_batch.to(device)
+        pred = lstm2(x_batch)
+        loss = loss_fn(pred, y_batch)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1))
+        accuracy_hist_train += is_correct.sum()
+
+    accuracy_hist_train = accuracy_hist_train.float() / len(train_loader.dataset)
+    print(f'Epoch {epoch} Accuracy: {accuracy_hist_train}')
+
+
+lstm2.eval()
+accuracy_hist_test = 0
+
+with torch.no_grad():
+    for x_test, y_test in test_loader:
+        x_test = x_test.to(device)
+        y_test = y_test.to(device)
+        pred = lstm2(x_test)
+
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1))
+        accuracy_hist_test += is_correct.sum()
+
+    accuracy_hist_test = accuracy_hist_test.float() / len(test_loader.dataset)
+    print(f'Config 2 Accuracy: {accuracy_hist_test}')
+
+## Config 3 ##
+lstm3 = LSTMConfig3()
+print(lstm3)
+lstm3.to(device)
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(lstm3.parameters(), lr=learning_rate)
+for epoch in range(num_epochs):
+    accuracy_hist_train = 0
+
+    for x_batch, y_batch in train_loader:
+        x_batch = x_batch.to(device)
+        y_batch = y_batch.to(device)
+        pred = lstm3(x_batch)
+        loss = loss_fn(pred, y_batch)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1))
+        accuracy_hist_train += is_correct.sum()
+
+    accuracy_hist_train = accuracy_hist_train.float() / len(train_loader.dataset)
+    print(f'Epoch {epoch} Accuracy: {accuracy_hist_train}')
+
+
+lstm3.eval()
+accuracy_hist_test = 0
+
+with torch.no_grad():
+    for x_test, y_test in test_loader:
+        x_test = x_test.to(device)
+        y_test = y_test.to(device)
+        pred = lstm3(x_test)
+
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1))
+        accuracy_hist_test += is_correct.sum()
+
+    accuracy_hist_test = accuracy_hist_test.float() / len(test_loader.dataset)
+    print(f'Config 3 Accuracy: {accuracy_hist_test}')
+
+
+## Config 4 ##
+lstm4 = LSTMConfig4()
+print(lstm4)
+lstm4.to(device)
+
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(lstm4.parameters(), lr=learning_rate)
+for epoch in range(num_epochs):
+    accuracy_hist_train = 0
+
+    for x_batch, y_batch in train_loader:
+        x_batch = x_batch.to(device)
+        y_batch = y_batch.to(device)
+        pred = lstm4(x_batch)
+        loss = loss_fn(pred, y_batch)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1))
+        accuracy_hist_train += is_correct.sum()
+
+    accuracy_hist_train = accuracy_hist_train.float() / len(train_loader.dataset)
+    print(f'Epoch {epoch} Accuracy: {accuracy_hist_train}')
 
 X_test = X_test.to(device)
 y_test = y_test.to(device)
 
-pred = lstm(X_test)
-is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1)).float()
-print(f'Test accuracy: {is_correct.mean()}')
+lstm4.eval()
+accuracy_hist_test = 0
+
+with torch.no_grad():
+    for x_test, y_test in test_loader:
+        x_test = x_test.to(device)
+        y_test = y_test.to(device)
+        pred = lstm4(x_test)
+
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1))
+        accuracy_hist_test += is_correct.sum()
+
+    accuracy_hist_test = accuracy_hist_test.float() / len(test_loader.dataset)
+    print(f'Config 4 Accuracy: {accuracy_hist_test}')
+
+## Config 5 ##
+lstm5 = LSTMConfig5()
+print(lstm5)
+lstm5.to(device)
+
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(lstm5.parameters(), lr=learning_rate)
+for epoch in range(num_epochs):
+    accuracy_hist_train = 0
+
+    for x_batch, y_batch in train_loader:
+        x_batch = x_batch.to(device)
+        y_batch = y_batch.to(device)
+        pred = lstm5(x_batch)
+        loss = loss_fn(pred, y_batch)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1))
+        accuracy_hist_train += is_correct.sum()
+
+    accuracy_hist_train = accuracy_hist_train.float() / len(train_loader.dataset)
+    print(f'Epoch {epoch} Accuracy: {accuracy_hist_train}')
+
+
+lstm5.eval()
+accuracy_hist_test = 0
+
+with torch.no_grad():
+    for x_test, y_test in test_loader:
+        x_test = x_test.to(device)
+        y_test = y_test.to(device)
+        pred = lstm5(x_test)
+
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1))
+        accuracy_hist_test += is_correct.sum()
+
+    accuracy_hist_test = accuracy_hist_test.float() / len(test_loader.dataset)
+    print(f'Config 2 Accuracy: {accuracy_hist_test}')
+
+## Config 6 ##
+lstm6 = LSTMConfig6()
+print(lstm6)
+lstm6.to(device)
+
+loss_fn = nn.CrossEntropyLoss()
+optimizer = torch.optim.Adam(lstm6.parameters(), lr=learning_rate)
+for epoch in range(num_epochs):
+    accuracy_hist_train = 0
+
+    for x_batch, y_batch in train_loader:
+        x_batch = x_batch.to(device)
+        y_batch = y_batch.to(device)
+        pred = lstm6(x_batch)
+        loss = loss_fn(pred, y_batch)
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_batch, dim=1))
+        accuracy_hist_train += is_correct.sum()
+
+    accuracy_hist_train = accuracy_hist_train.float() / len(train_loader.dataset)
+    print(f'Epoch {epoch} Accuracy: {accuracy_hist_train}')
+
+
+lstm6.eval()
+accuracy_hist_test = 0
+
+with torch.no_grad():
+    for x_test, y_test in test_loader:
+        x_test = x_test.to(device)
+        y_test = y_test.to(device)
+        pred = lstm6(x_test)
+
+        is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1))
+        accuracy_hist_test += is_correct.sum()
+
+    accuracy_hist_test = accuracy_hist_test.float() / len(test_loader.dataset)
+    print(f'Config 6 Accuracy: {accuracy_hist_test}')
+
+
+# Questions: why it is the same for every config/model ?

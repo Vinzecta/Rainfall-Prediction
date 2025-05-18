@@ -42,7 +42,7 @@ if __name__=="__main__":
         gene_start = time.perf_counter()
         # model = RandomForestRegressor(n_estimators=500, random_state=random.randint(1,1000)) # model to test
         random.seed(i)
-        chromosome, fitness, num_gen = gene.genetic_algorithm(rain_type_df, LinearRegression())
+        chromosome, fitness, num_gen = gene.genetic_algorithm(rain_type_df, RandomForestClassifier())
         if (not (best_fitness and best_chromosome) or best_fitness < fitness):
             best_chromosome = chromosome
             best_fitness = fitness
@@ -58,7 +58,7 @@ if __name__=="__main__":
 # LinearRegression:         [1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1]
 # KNeighborsClassifier:     [0, 1, 0, 1, 0, 1, 1, 1, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1, 1, 1, 0]
 # DecisionTreeClassifier:   [0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1]
-# RandomForestClassifier:    [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
+# RandomForestClassifier:   [1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1]
 #                           [0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 1, 0]
 
 ## remove rain and raining feature, limit >= 10
@@ -77,3 +77,22 @@ if __name__=="__main__":
 # Or:                       [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
 # Major:                    [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
 # More than 1:              [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1]
+
+
+## new value
+# LinearRegression:         [0, 1, 1, 1, 0, 0, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0]
+
+
+
+
+
+# KNeighborsClassifier:     [0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
+# DecisionTreeClassifier:   [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 0, 1]
+# RandomForestClassifier:   [1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1]
+
+# And:                      [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
+# Or:                       [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1]
+# Major:                    [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
+
+
+# More than 1:              [1, 1, 1, 1, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 1, 0, 1]

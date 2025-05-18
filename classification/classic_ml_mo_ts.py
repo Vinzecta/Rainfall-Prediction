@@ -29,7 +29,7 @@ y = rain_type_df[[
     "Rain_Type_No_Rain", "Rain_Type_Shower", "Rain_Type_Very_Heavy_Rain", "Rain_Type_Weak_Rain"
 ]].values
 
-mask = [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
+mask = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 selected_feature = [index for index, value in enumerate(mask) if value == 1]
 # Select columns where chromosome is 1
 new_X = X.iloc[:, selected_feature].values
@@ -37,12 +37,10 @@ new_X = X.iloc[:, selected_feature].values
 X_train, X_test, y_train, y_test = train_test_split(new_X, y, test_size=0.2, random_state=69)
 
 num_trees = [100, 250, 500]
-best_acc = 0.0
-best_rf = None
 for num_tree in num_trees:
     
     rf = RandomForestClassifier(n_estimators=num_tree, random_state=69)
-    # mo_rf = MultiOutputClassifier(rf)
+    mo_rf = MultiOutputClassifier(rf)
     kfold = KFold(n_splits=10)
     # kfold = StratifiedKFold(n_splits=10, shuffle=True, random_state=69)
     # Using 10-fold cross validation to evaluate performance
@@ -50,8 +48,8 @@ for num_tree in num_trees:
     for train_idx, val_idx in kfold.split(X_train, y_train):
         X_train_fold, X_val_fold = X_train[train_idx], X_train[val_idx]
         y_train_fold, y_val_fold = y_train[train_idx], y_train[val_idx]
-        rf.fit(X_train_fold, y_train_fold)
-        acc_rf = accuracy_score(y_val_fold, rf.predict(X_val_fold))
+        mo_rf.fit(X_train_fold, y_train_fold)
+        acc_rf = accuracy_score(y_val_fold, mo_rf.predict(X_val_fold))
         accs_rf.append(acc_rf)
 
     mean_acc = np.mean(accs_rf)
@@ -59,8 +57,7 @@ for num_tree in num_trees:
     # Evaluate performance with number of tree
     print(f'Accuracy - RandomForest - {num_tree} trees: {mean_acc} +/- {std_acc}')
 
-    if mean_acc > best_acc:
-        best_acc = mean_acc
+
 ############################## SVC ##############################
 # from sklearn.model_selection import GridSearchCV
 # # Tuning C and gamma via grid search and find the best model
@@ -164,8 +161,6 @@ std_acc = np.std(accs_tree)
 # Evaluate performance with accuracy of Desicision tree classifier
 print(f'Accuracy - Tree: {mean_acc} +/- {std_acc}')
 
-######## Accuracy test
-
 # Accuracy - RandomForest - 100 trees: 0.8847819788497754 +/- 0.04248507157883245
 # Accuracy - RandomForest - 250 trees: 0.9052947993625959 +/- 0.022410580084647497
 # Accuracy - RandomForest - 500 trees: 0.8933362306243662 +/- 0.016378159672278226
@@ -268,27 +263,43 @@ print(f'Accuracy - Tree: {mean_acc} +/- {std_acc}')
 # Accuracy - Tree: 0.8029769665362885 +/- 0.04090909854026778
 
 
-## No linear: 
-## Take all voting: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
-# Accuracy - RandomForest - 100 trees: 0.8037882080254963 +/- 0.04819899055252355
-# Accuracy - RandomForest - 250 trees: 0.8080689555265828 +/- 0.04738255523176638
-# Accuracy - RandomForest - 500 trees: 0.8080617122990006 +/- 0.04490904432601081
-# Accuracy - LinearRegression: 0.8464363320295524 +/- 0.04099278333455359
-# Accuracy - KNN: 0.8088946834709547 +/- 0.04370777669632972
-# Accuracy - Tree: 0.7337968998985949 +/- 0.05758971593828903
 
-## Take or voting: [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1]
-# Accuracy - RandomForest - 100 trees: 0.8447631464580618 +/- 0.03730628989476672
-# Accuracy - RandomForest - 250 trees: 0.843908445603361 +/- 0.03472784329565423
-# Accuracy - RandomForest - 500 trees: 0.8447631464580618 +/- 0.036314018100586654
-# Accuracy - LinearRegression: 0.837070838765754 +/- 0.03939875327954926
-# Accuracy - KNN: 0.8370853252209185 +/- 0.04356334800706456
-# Accuracy - Tree: 0.7918875851079241 +/- 0.05189614402120364
 
-## Major voting: [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
-# Accuracy - RandomForest - 100 trees: 0.839649427785021 +/- 0.03624638458802317
-# Accuracy - RandomForest - 250 trees: 0.839649427785021 +/- 0.03912461142533086
-# Accuracy - RandomForest - 500 trees: 0.8387802404751558 +/- 0.035867272339871234
-# Accuracy - LinearRegression: 0.8370635955381719 +/- 0.0382988458086411
-# Accuracy - KNN: 0.8319716065478777 +/- 0.029673370314697873
-# Accuracy - Tree: 0.8046284224250326 +/- 0.03658545647653308
+# Train test split
+training_data_len = math.ceil(len(rain_type_df) * 0.8)
+
+# Splitting the dataset
+train_data = rain_type_df[:training_data_len].iloc[:]
+test_data = rain_type_df[training_data_len:].iloc[:]
+
+input_hours = 12
+output_hours = 1
+
+X_train, y_train = [], []
+timestamps = train_data.index
+
+for i in range(len(train_data) - input_hours - output_hours):
+    # Extract input (past 3 days)
+    X_train.append(train_data.iloc[i:i+input_hours, :19])
+
+    # Extract output (next 6 hours)
+    y_train.append(train_data.iloc[i+input_hours+output_hours][19:])
+
+
+X_test, y_test = [], []
+timestamps = test_data.index
+
+for i in range(len(test_data) - input_hours - output_hours):
+    # Extract input (past 3 days)
+    X_test.append(test_data.iloc[i:i+input_hours, :19])
+
+    # Extract output (next 6 hours)
+    y_test.append(test_data.iloc[i+input_hours+output_hours][19:])
+
+X_train = np.array(X_train)
+y_train = np.array(y_train)
+X_test = np.array(X_test)
+y_test = np.array(y_test)
+
+print(X_train.shape)
+print(y_train.shape)
