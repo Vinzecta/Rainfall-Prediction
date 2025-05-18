@@ -61,7 +61,7 @@ def genetic_algorithm(dataset, model):
             stagnant_generation += 1
         # Early stopping condition
         if stagnant_generation >= max_stagnant_generation:
-            print("Stopping early: No improvement for 20 consecutive generations.")
+            print(f"Stopping early: No improvement for {value.MAX_STAGNANT_GENERATION} consecutive generations.")
             break
 
     return population[0].chromosome, best_fitness, (value.GENERATIONS - count)
