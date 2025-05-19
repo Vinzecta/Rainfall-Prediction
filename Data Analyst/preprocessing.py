@@ -13,6 +13,14 @@ if (is_nan):
 else:
     print("No null values")
 
+#Fill nan using mean
+for i in data.columns:
+    data[i].fillna(value=data[i].mean(), inplace=True)
+
+#Fill nan using median
+for i in data.columns:
+    data[i].fillna(value=data[i].median(), inplace=True)
+
 #Check if exist a case when having no record of rain (0mm) but the raining(s)
 checker =  not data.loc[(data['rain (mm)'] == 0) & (data['raining (s)'] > 0), ['rain (mm)', 'raining (s)']].empty
 if (checker):
