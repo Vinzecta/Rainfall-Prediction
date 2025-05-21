@@ -2,24 +2,11 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
+import matplotlib.pyplot as plt
 
 data = pd.read_csv("../processed/mpi_roof.csv", encoding='latin-1')
 data['Date Time'] = pd.to_datetime(data['Date Time'], format='%d.%m.%Y %H:%M:%S')
 data = data.set_index("Date Time")
-
-is_nan = data.isnull().values.any()
-if (is_nan):
-    print("There exist null values")
-else:
-    print("No null values")
-
-#Fill nan using mean
-for i in data.columns:
-    data[i].fillna(value=data[i].mean(), inplace=True)
-
-#Fill nan using median
-for i in data.columns:
-    data[i].fillna(value=data[i].median(), inplace=True)
 
 #Check if exist a case when having no record of rain (0mm) but the raining(s)
 checker =  not data.loc[(data['rain (mm)'] == 0) & (data['raining (s)'] > 0), ['rain (mm)', 'raining (s)']].empty
@@ -37,6 +24,11 @@ else:
     print("There is no case")
 
 resample_data = data.resample('6h').mean()
+resample_row = resample_data.shape[0]
+
+#Check for nan values in the resampled dataset
+for i in resample_data.columns:
+    resample_data[i] = resample_data[i].interpolate(method='linear', limit_direction='both')
 
 
 #Convert from K to C
