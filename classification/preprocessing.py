@@ -29,6 +29,15 @@ else:
     print("There is no case")
 resample_data = data.resample('6h').mean()
 
+
+resample_row = resample_data.shape[0]
+
+#Check for nan values in the resampled dataset
+for i in resample_data.columns:
+    resample_data[i] = resample_data[i].interpolate(method='linear', limit_direction='both')
+
+print('Nan sum: ', resample_data.isna().sum())
+
 #Conver from C to K
 resample_data['T (degC)'] = resample_data['T (degC)'] + 273.15
 resample_data['Tdew (degC)'] = resample_data['Tdew (degC)'] + 273.15
