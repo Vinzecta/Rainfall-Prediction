@@ -35,7 +35,7 @@ train_data = rain_type_df[:training_data_len].iloc[:]
 test_data = rain_type_df[training_data_len:].iloc[:]
 
 input_hours = 28
-output_hours = 4
+output_hours = 12
 
 X_train, y_train = [], []
 timestamps = train_data.index
