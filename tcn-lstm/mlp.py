@@ -24,7 +24,7 @@ y = rain_type_df[[
     "Rain_Type_No_Rain", "Rain_Type_Shower", "Rain_Type_Very_Heavy_Rain", "Rain_Type_Weak_Rain"
 ]].values
 
-mask = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+mask = [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
 selected_feature = [index for index, value in enumerate(mask) if value == 1]
 # Select columns where chromosome is 1
 print(selected_feature)
@@ -91,6 +91,7 @@ for epoch in range(num_epochs):
 # is_correct = (torch.argmax(pred, dim=1) == torch.argmax(y_test, dim=1)).float()
 # print(f'Test accuracy: {is_correct.mean()}')
 
+model.eval()
 accuracy_hist_test = 0
 with torch.no_grad():
     for x_test, y_test in test_dl:
@@ -101,15 +102,19 @@ with torch.no_grad():
         accuracy_hist_test += is_correct.sum()
 
     accuracy_hist_test = accuracy_hist_test.float() / len(test_dl.dataset)
-    print(f'Config 1 Accuracy: {accuracy_hist_test}' )
+    print(f'Model Accuracy: {accuracy_hist_test}' )
 
+
+
+### Long data
 ## All feature: [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-# Test accuracy: 0.873720109462738
-## Take all voting: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0]
-# Test accuracy: 0.849829375743866
-## Take or voting: [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1]
-# Test accuracy: 0.873720109462738
-## Major voting: [0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0]
-# Test accuracy: 0.8634812235832214
-## More than 1: [1, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 1, 1]
-# Test accuracy: 0.8600682616233826
+# Model Accuracy: 0.8949245810508728
+## Take all voting: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
+# Model Accuracy: 0.890546441078186
+## Take or voting: [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1]
+# Model Accuracy: 0.8952488899230957
+## Major voting: [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
+# Model Accuracy: 0.8934652209281921
+
+
+torch.save(model, 'mlp.pt')
