@@ -2,6 +2,7 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.preprocessing import OneHotEncoder
+import matplotlib.pyplot as plt
 
 data = pd.read_csv("../processed/mpi_roof.csv", encoding='latin-1')
 data['Date Time'] = pd.to_datetime(data['Date Time'], format='%d.%m.%Y %H:%M:%S')
@@ -46,6 +47,72 @@ resample_data['Tlog (degC)'] = resample_data['Tlog (degC)'] + 273.15
 resample_data.rename(columns={'T (degC)': 'T (K)'}, inplace=True)
 resample_data.rename(columns={'Tdew (degC)': 'Tdew (K)'}, inplace=True)
 resample_data.rename(columns={'Tlog (degC)': 'Tlog (K)'}, inplace=True)
+
+#Replace negative numbers
+replace_data = resample_data
+replace_data['T (K)'] = replace_data['T (K)'].apply(lambda x: np.nan if x < 243.15 else x)
+replace_data['Tdew (K)'] = replace_data['Tdew (K)'].apply(lambda x: np.nan if x < 243.15 else x)
+replace_data['Tpot (K)'] = replace_data['Tpot (K)'].apply(lambda x: np.nan if x < 243.15 else x)
+replace_data['Tlog (K)'] = replace_data['Tlog (K)'].apply(lambda x: np.nan if x < 243.15 else x)
+
+resample_data[['T (K)', 'Tdew (K)', 'Tpot (K)', 'Tlog (K)']] = replace_data[['T (K)', 'Tdew (K)', 'Tpot (K)', 'Tlog (K)']]
+replace_data = replace_data.drop(columns=['T (K)', 'Tdew (K)', 'Tpot (K)', 'Tlog (K)'])
+
+for i in replace_data.columns:
+    resample_data[i] = replace_data[i].apply(lambda x: 0 if x < 0 else x)
+
+#Check for nan values in the resampled dataset
+for i in resample_data.columns:
+    resample_data[i] = resample_data[i].interpolate(method='linear', limit_direction='both')
+
+# Plot visualization
+
+titles = [
+    "Pressure",
+    "Temperature",
+    "Temperature in Kelvin",
+    "Temperature (dew point)",
+    "Relative Humidity",
+    "Saturation vapor pressure",
+    "Vapor pressure",
+    "Vapor pressure deficit",
+    "Specific humidity",
+    "Water vapor concentration",
+    "Airtight",
+    "Wind speed",
+    "Maximum wind speed",
+    "Wind direction in degrees",
+    "Rainfall (in millimeters)",
+    "Raining duration (in seconds)",
+    "Solar Radiation (in watts per square meter)",
+    "Photosynthetically Active Radiation (in micromoles per square meter per second)",
+    "Maximum Photosynthetically Active Radiation (in micromoles per square meter per second)",
+    "Logged Temperature (in degrees Celsius)",
+    "Carbon Dioxide Concentration (in parts per million)"
+]
+
+n_cols = 2
+n_rows = (len(resample_data.columns) + n_cols - 1) // n_cols
+
+fig, axes = plt.subplots(n_rows, n_cols, figsize=(15, 22), sharex=False)
+axes = axes.flatten()
+
+for i, column, in enumerate(resample_data.columns):
+
+    axes[i].plot(resample_data.index, resample_data[column], label=column)
+    axes[i].set_title(f'{titles[i]} {column}')
+    axes[i].set_xlabel('Date')
+    axes[i].set_ylabel('Value')
+    axes[i].grid(True)
+    axes[i].legend()
+    
+# Hide any unused subplots
+for j in range(len(resample_data.columns), len(axes)):
+    fig.delaxes(axes[j])
+
+# Adjust layout
+plt.tight_layout()
+plt.show()
 
 print(resample_data.head())
 #Delete C temperature column (if neccessary)
