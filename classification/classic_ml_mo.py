@@ -29,7 +29,7 @@ y = rain_type_df[[
     "Rain_Type_No_Rain", "Rain_Type_Shower", "Rain_Type_Very_Heavy_Rain", "Rain_Type_Weak_Rain"
 ]].values
 
-mask = [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
+mask = [1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1]
 selected_feature = [index for index, value in enumerate(mask) if value == 1]
 # Select columns where chromosome is 1
 new_X = X.iloc[:, selected_feature].values
@@ -137,36 +137,59 @@ print(f'Accuracy - Tree: {mean_acc} +/- {std_acc}')
 
 ######################################################### Remove 2 important feature ####################################################
 ## Before filter
-# Accuracy - RandomForest - 100 trees: 0.878642027973999 +/- 0.02214886062442598
-# Accuracy - RandomForest - 250 trees: 0.8800365840370585 +/- 0.022151713519450392
-# Accuracy - RandomForest - 500 trees: 0.8803283917958531 +/- 0.02282211734067736
-# Accuracy - LinearRegression: 0.887949491226941 +/- 0.022467729906366904
-# Accuracy - KNN: 0.8741662785712874 +/- 0.02331564833175469
-# Accuracy - Tree: 0.8276946440313454 +/- 0.02268214275508905
-
-
+# Accuracy - RandomForest - 100 trees: 0.878577166613448 +/- 0.022209822770644393
+# Accuracy - RandomForest - 250 trees: 0.879614895794813 +/- 0.02285025107809665
+# Accuracy - RandomForest - 500 trees: 0.879971606984118 +/- 0.023191043359977487
+# Accuracy - LinearRegression: 0.8881440122036539 +/- 0.02307837997015312
+# Accuracy - KNN: 0.8742311609668182 +/- 0.02443924685052174
+# Accuracy - Tree: 0.8278566133766485 +/- 0.023069573395230556
 
 ## No linear: 
-## Take all voting: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1]
-# Accuracy - RandomForest - 100 trees: 0.8570127257421458 +/- 0.01030668474428443
-# Accuracy - RandomForest - 250 trees: 0.858245112627593 +/- 0.009469053185794944
-# Accuracy - RandomForest - 500 trees: 0.8583100055406139 +/- 0.009794152841160116
-# Accuracy - LinearRegression: 0.8907710498095703 +/- 0.02166997433434772
-# Accuracy - KNN: 0.8785452039614757 +/- 0.021499969236063503
-# Accuracy - Tree: 0.8023335575662192 +/- 0.0346430819330061
-
-## Take or voting: [1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1]
-# Accuracy - RandomForest - 100 trees: 0.8794527371346907 +/- 0.02166677695951645
-# Accuracy - RandomForest - 250 trees: 0.8801660122684416 +/- 0.022740897120325475
-# Accuracy - RandomForest - 500 trees: 0.8806848505653992 +/- 0.023078546840871406
-# Accuracy - LinearRegression: 0.8901225308614708 +/- 0.02074531669793074
-# Accuracy - KNN: 0.8725772541189645 +/- 0.022902430012371904
-# Accuracy - Tree: 0.8312614719521682 +/- 0.02157650881933212
-
-## Major voting: [1, 1, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
-# Accuracy - RandomForest - 100 trees: 0.8749774925714968 +/- 0.021906890029406365
-# Accuracy - RandomForest - 250 trees: 0.875658615738456 +/- 0.021623298208720054
-# Accuracy - RandomForest - 500 trees: 0.8762748354749046 +/- 0.021814333016036684
+## Take all voting: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
+# Accuracy - RandomForest - 100 trees: 0.8352168790568589 +/- 0.04357255395895333
+# Accuracy - RandomForest - 250 trees: 0.8366114982248583 +/- 0.04309855379212968
+# Accuracy - RandomForest - 500 trees: 0.8369358365800824 +/- 0.04288756007883909
 # Accuracy - LinearRegression: 0.891225005710997 +/- 0.02201475890079133
-# Accuracy - KNN: 0.8752687218683437 +/- 0.023951320924377642
-# Accuracy - Tree: 0.8250673014182203 +/- 0.018854215936058513
+# Accuracy - KNN: 0.8820796169782579 +/- 0.02261647808181005
+# Accuracy - Tree: 0.8058660353648495 +/- 0.05794500828440858
+
+## Take or voting: [1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1]
+# Accuracy - RandomForest - 100 trees: 0.8784149764008561 +/- 0.02236661076581743
+# Accuracy - RandomForest - 250 trees: 0.879355534492529 +/- 0.02219650176305159
+# Accuracy - RandomForest - 500 trees: 0.8805229548425257 +/- 0.022070967546886058
+# Accuracy - LinearRegression: 0.888500775980409 +/- 0.023272178853097604
+# Accuracy - KNN: 0.8726744252086565 +/- 0.025265145142976782
+# Accuracy - Tree: 0.8262675363368761 +/- 0.02365667185127065
+
+## Major voting: [1, 1, 1, 0, 0, 0, 0, 1, 1, 0, 1, 0, 1, 1, 0, 1, 0, 1, 1]
+# Accuracy - RandomForest - 100 trees: 0.8785446149820382 +/- 0.023324063374248447
+# Accuracy - RandomForest - 250 trees: 0.8795176090127317 +/- 0.02290534066532216
+# Accuracy - RandomForest - 500 trees: 0.8797122877517939 +/- 0.021972072204012365
+# Accuracy - LinearRegression: 0.891225005710997 +/- 0.02201475890079133
+# Accuracy - KNN: 0.8724474262229631 +/- 0.02447955261393022
+# Accuracy - Tree: 0.8290242545939345 +/- 0.021666167242155115
+
+# KNeighborsClassifier:     [0, 0, 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 1]
+# Accuracy - RandomForest - 100 trees: 0.8774746076240023 +/- 0.02134580238223546
+# Accuracy - RandomForest - 250 trees: 0.8787716875901612 +/- 0.02187621210166064
+# Accuracy - RandomForest - 500 trees: 0.8787069208870198 +/- 0.021550216426836487
+# Accuracy - LinearRegression: 0.891225005710997 +/- 0.02201475890079133
+# Accuracy - KNN: 0.8702748178055215 +/- 0.02456912161314162
+# Accuracy - Tree: 0.8261051883619347 +/- 0.01960637730279816
+
+
+# DecisionTreeClassifier:   [1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1]
+# Accuracy - RandomForest - 100 trees: 0.8777339899612662 +/- 0.0226977969959668
+# Accuracy - RandomForest - 250 trees: 0.878512378875327 +/- 0.022263682542997026
+# Accuracy - RandomForest - 500 trees: 0.8788690374771824 +/- 0.022648097550382152
+# Accuracy - LinearRegression: 0.8900249601071606 +/- 0.023117923020787846
+# Accuracy - KNN: 0.8716043652631706 +/- 0.02465071592170199
+# Accuracy - Tree: 0.8266891509566919 +/- 0.02447133985712534
+
+# RandomForestClassifier:   [1, 1, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1, 1]
+# Accuracy - RandomForest - 100 trees: 0.8787070470968992 +/- 0.021835412933535168
+# Accuracy - RandomForest - 250 trees: 0.8802636881976514 +/- 0.022098354402391156
+# Accuracy - RandomForest - 500 trees: 0.8806203573169966 +/- 0.02241652456703205
+# Accuracy - LinearRegression: 0.891225005710997 +/- 0.02201475890079133
+# Accuracy - KNN: 0.8701122910332508 +/- 0.026344511248676112
+# Accuracy - Tree: 0.8158577980667172 +/- 0.02103445970834434
